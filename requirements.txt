@@ -6,9 +6,16 @@ mysql-connector-python==9.1.0
 numpy==2.0.2
 opencv-python==4.10.0.84
 packaging==24.2
-pillow==11.0.0
-six==1.15.0
-flask==2.3.2
-python-dotenv==1.0.0
-flask_sqlalchemy==3.0.3
 
+six==1.15.0
+
+python-dotenv==1.0.0
+
+
+Flask>=2.0.1
+Flask-SQLAlchemy>=2.5.1
+Flask-Login>=0.5.0
+qrcode>=7.3
+Pillow>=9.0.0
+python-dotenv>=0.19.0
+Flask-WTF>=0.15.1
