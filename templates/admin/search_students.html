@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Students - Attendance System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .search-box {
+            margin-bottom: 20px;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .student-list {
+            list-style: none;
+            padding: 0;
+        }
+        .student-item {
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .student-info {
+            flex-grow: 1;
+        }
+        .view-button {
+            background: #1877f2;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+        }
+        .view-button:hover {
+            background: #166fe5;
+        }
+        .back-link {
+            margin-top: 20px;
+        }
+        .back-link a {
+            color: #1877f2;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Search Students</h1>
+        
+        <div class="search-box">
+            <form method="GET">
+                <input type="text" name="query" placeholder="Search by student name..." value="{{ request.args.get('query', '') }}">
+            </form>
+        </div>
+
+        <ul class="student-list">
+            {% for student in students %}
+            <li class="student-item">
+                <div class="student-info">
+                    <h3>{{ student.username }}</h3>
+                    <p>Department: {{ student.department }}</p>
+                    <p>Email: {{ student.email }}</p>
+                </div>
+                <a href="{{ url_for('admin.student_details', student_id=student.id) }}" class="view-button">View Details</a>
+            </li>
+            {% else %}
+            <li class="student-item">No students found.</li>
+            {% endfor %}
+        </ul>
+
+        <div class="back-link">
+            <a href="{{ url_for('admin.dashboard') }}">&larr; Back to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>

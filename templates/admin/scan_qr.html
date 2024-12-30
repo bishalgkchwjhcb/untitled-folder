@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scan QR Code - Attendance System</title>
+    <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        #preview {
+            width: 100%;
+            max-width: 640px;
+            margin: 20px auto;
+            display: block;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            display: none;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .back-link {
+            margin-top: 20px;
+        }
+        .back-link a {
+            color: #1877f2;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Scan Student QR Code</h1>
+        <video id="preview"></video>
+        <div id="result"></div>
+        <div class="back-link">
+            <a href="{{ url_for('admin.dashboard') }}">&larr; Back to Dashboard</a>
+        </div>
+    </div>
+
+    <script>
+        let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
+        
+        scanner.addListener('scan', function (content) {
+            fetch('{{ url_for("admin.scan_qr") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'qr_data=' + encodeURIComponent(content)
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultDiv = document.getElementById('result');
+                resultDiv.style.display = 'block';
+                
+                if (data.success) {
+                    resultDiv.className = 'success';
+                    resultDiv.innerHTML = `Successfully marked attendance for ${data.student.name} (${data.student.department})`;
+                } else {
+                    resultDiv.className = 'error';
+                    resultDiv.innerHTML = data.error || 'An error occurred';
+                }
+                
+                setTimeout(() => {
+                    resultDiv.style.display = 'none';
+                }, 3000);
+            })
+            .catch(error => {
+                const resultDiv = document.getElementById('result');
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'error';
+                resultDiv.innerHTML = 'An error occurred while processing the QR code';
+                
+                setTimeout(() => {
+                    resultDiv.style.display = 'none';
+                }, 3000);
+            });
+        });
+        
+        Instascan.Camera.getCameras().then(function (cameras) {
+            if (cameras.length > 0) {
+                scanner.start(cameras[0]);
+            } else {
+                console.error('No cameras found.');
+                alert('No cameras found on your device.');
+            }
+        }).catch(function (e) {
+            console.error(e);
+            alert('Error accessing camera.');
+        });
+    </script>
+</body>
+</html>

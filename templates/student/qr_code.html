@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Your QR Code - Attendance System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .qr-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .qr-container img {
+            max-width: 300px;
+            height: auto;
+        }
+        .back-link {
+            margin-top: 20px;
+        }
+        .back-link a {
+            color: #1877f2;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Your QR Code</h1>
+        <div class="qr-container">
+            <img src="{{ url_for('static', filename='qrcodes/' + current_user.qr_code) }}" alt="Your QR Code">
+        </div>
+        <p>Use this QR code to mark your attendance when scanned by an administrator.</p>
+        <div class="back-link">
+            <a href="{{ url_for('student.dashboard') }}">&larr; Back to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>

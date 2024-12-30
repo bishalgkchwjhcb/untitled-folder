@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}{% endblock %} - Attendance Management System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            display: flex;
+            background-color: #f0f2f5;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background: #2c3e50;
+            padding: 20px 0;
+            position: fixed;
+            left: 0;
+            color: white;
+        }
+
+        .sidebar-header {
+            text-align: center;
+            padding: 20px;
+            border-bottom: 1px solid #34495e;
+        }
+
+        .sidebar-header h2 {
+            color: #ecf0f1;
+            font-size: 1.5em;
+        }
+
+        .sidebar-menu {
+            padding: 20px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            color: #ecf0f1;
+            text-decoration: none;
+            transition: 0.3s;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+
+        .menu-item:hover {
+            background: #34495e;
+        }
+
+        .menu-item i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            width: calc(100% - 250px);
+            min-height: 100vh;
+        }
+
+        /* User Info */
+        .user-info {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            padding: 20px;
+            border-top: 1px solid #34495e;
+            text-align: center;
+        }
+
+        .user-info p {
+            margin-bottom: 10px;
+        }
+
+        .logout-btn {
+            color: #e74c3c;
+            text-decoration: none;
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 3px;
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #c0392b;
+            color: white;
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>AMS</h2>
+            <p>Attendance Management</p>
+        </div>
+        
+        <div class="sidebar-menu">
+            <a href="{{ url_for('home') }}" class="menu-item">
+                <i class="fas fa-home"></i> Home
+            </a>
+
+            {% if current_user.is_authenticated %}
+                {% if current_user.user_type == 'admin' %}
+                    <!-- Admin Menu Items -->
+                    <a href="{{ url_for('admin.dashboard') }}" class="menu-item">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                    <a href="{{ url_for('admin.scan_qr') }}" class="menu-item">
+                        <i class="fas fa-qrcode"></i> Scan QR
+                    </a>
+                    <a href="{{ url_for('admin.analytics') }}" class="menu-item">
+                        <i class="fas fa-chart-bar"></i> Analytics
+                    </a>
+                    <a href="{{ url_for('admin.search_students') }}" class="menu-item">
+                        <i class="fas fa-search"></i> Search Students
+                    </a>
+                {% else %}
+                    <!-- Student Menu Items -->
+                    <a href="{{ url_for('student.dashboard') }}" class="menu-item">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                    <a href="{{ url_for('student.view_qr') }}" class="menu-item">
+                        <i class="fas fa-qrcode"></i> My QR Code
+                    </a>
+                    <a href="{{ url_for('student.attendance_history') }}" class="menu-item">
+                        <i class="fas fa-history"></i> Attendance History
+                    </a>
+                    <a href="{{ url_for('student.attendance_percentage') }}" class="menu-item">
+                        <i class="fas fa-percentage"></i> Attendance Percentage
+                    </a>
+                {% endif %}
+            {% else %}
+                <a href="{{ url_for('auth.login') }}" class="menu-item">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </a>
+                <a href="{{ url_for('auth.register') }}" class="menu-item">
+                    <i class="fas fa-user-plus"></i> Register
+                </a>
+            {% endif %}
+        </div>
+
+        {% if current_user.is_authenticated %}
+        <div class="user-info">
+            <p>{{ current_user.username }}</p>
+            <p>{{ current_user.user_type.title() }}</p>
+            <a href="{{ url_for('auth.logout') }}" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </div>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
