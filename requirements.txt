@@ -8,3 +8,4 @@ opencv-python==4.10.0.84
 packaging==24.2
 pillow==11.0.0
 six==1.15.0
+flask==2.3.2
